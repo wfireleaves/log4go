@@ -42,6 +42,10 @@ type FileLogWriter struct {
 
 // This is the FileLogWriter's output method
 func (w *FileLogWriter) LogWrite(rec *LogRecord) {
+	if rec.Json {
+		encode := NewJsonEncoder()
+		rec.Message = encode.EncodeJson(rec)
+	}
 	w.rec <- rec
 }
 
@@ -105,7 +109,13 @@ func NewFileLogWriter(fname string, rotate bool) *FileLogWriter {
 				}
 
 				// Perform the write
-				n, err := fmt.Fprint(w.file, FormatLogRecord(w.format, rec))
+				var n int
+				var err error
+				if rec.Json {
+					n, err = fmt.Fprint(w.file, rec.Message)
+				} else {
+					n, err = fmt.Fprint(w.file, FormatLogRecord(w.format, rec))
+				}
 				if err != nil {
 					fmt.Fprintf(os.Stderr, "FileLogWriter(%q): %s\n", w.filename, err)
 					return
@@ -261,4 +271,11 @@ func NewXMLLogWriter(fname string, rotate bool) *FileLogWriter {
 		<source>%S</source>
 		<message>%M</message>
 	</record>`).SetHeadFoot("<log created=\"%D %T\">", "</log>")
+}
+
+// NewJsonLogWriter is a utility method for creating a FileLogWriter set up to
+// output XML record log messages instead of line-based ones.
+func NewJsonLogWriter(fname string, rotate bool) *FileLogWriter {
+	return NewFileLogWriter(fname, rotate).SetFormat(
+		`{}`).SetHeadFoot("<log created=\"%D %T\">", "</log>")
 }

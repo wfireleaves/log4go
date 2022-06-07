@@ -103,6 +103,8 @@ type LogRecord struct {
 	Created time.Time // The time at which the log message was created (nanoseconds)
 	Source  string    // The message source
 	Message string    // The log message
+	Json    bool      // The log type (true: Format, false: json)
+	Fields  []Field   // The json log field
 }
 
 /****** LogWriter ******/
@@ -213,6 +215,44 @@ func (log Logger) intLogf(lvl Level, format string, args ...interface{}) {
 		Message: msg,
 	}
 
+	// Dispatch the logs
+	for _, filt := range log {
+		if lvl < filt.Level {
+			continue
+		}
+		filt.LogWrite(rec)
+	}
+}
+
+func (log Logger) intLogJson(lvl Level, message string, filed ...Field) {
+	skip := true
+
+	// Determine if any logging will be done
+	for _, filt := range log {
+		if lvl >= filt.Level {
+			skip = false
+			break
+		}
+	}
+	if skip {
+		return
+	}
+
+	// Determine caller func
+	_, fileName, lineno, ok := runtime.Caller(2)
+	src := ""
+	if ok {
+		src = fmt.Sprintf("%s:%d", fileName, lineno)
+	}
+	// Make the log record
+	rec := &LogRecord{
+		Level:   lvl,
+		Created: time.Now(),
+		Source:  src,
+		Message: message,
+		Json:    true,
+		Fields:  filed,
+	}
 	// Dispatch the logs
 	for _, filt := range log {
 		if lvl < filt.Level {
@@ -390,4 +430,23 @@ func (log Logger) Critical(arg0 string, args ...interface{}) {
 		lvl = CRITICAL
 	)
 	log.intLogf(lvl, fmt.Sprintf(arg0, args...))
+}
+
+func (log Logger) Errorjson(message string, field ...Field) {
+	const (
+		lvl = ERROR
+	)
+	log.intLogJson(lvl, message, field...)
+}
+
+func Int32(key string, value int32) Field {
+	return Field{Key: key, Type: Int32Type, Integer: int64(value)}
+}
+
+func String(key, value string) Field {
+	return Field{Key: key, Type: StringType, String: value}
+}
+
+func Bool(key string, value bool) Field {
+	return Field{Key: key, Type: BoolType, Interface: value}
 }

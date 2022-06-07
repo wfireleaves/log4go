@@ -6,9 +6,9 @@ import (
 	"io"
 	"os"
 	"time"
-)
 
-import l4g "code.google.com/p/log4go"
+	l4g "log4go"
+)
 
 const (
 	filename = "flw.log"

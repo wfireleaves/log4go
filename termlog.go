@@ -38,6 +38,10 @@ func (c *ConsoleLogWriter) run(out io.Writer) {
 // This is the ConsoleLogWriter's output method.  This will block if the output
 // buffer is full.
 func (c *ConsoleLogWriter) LogWrite(rec *LogRecord) {
+	if rec.Json {
+		encode := NewJsonEncoder()
+		rec.Message = encode.EncodeString(rec)
+	}
 	c.w <- rec
 }
 
