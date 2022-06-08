@@ -18,7 +18,7 @@ const testLogFile = "_logtest.log"
 
 var now time.Time = time.Unix(0, 1234567890123456789).In(time.UTC)
 
-func newLogRecord(lvl Level, src string, msg string) *LogRecord {
+func newLogRecordTest(lvl Level, src string, msg string) *LogRecord {
 	return &LogRecord{
 		Level:   lvl,
 		Source:  src,
@@ -29,7 +29,7 @@ func newLogRecord(lvl Level, src string, msg string) *LogRecord {
 
 func TestELog(t *testing.T) {
 	fmt.Printf("Testing %s\n", L4G_VERSION)
-	lr := newLogRecord(CRITICAL, "source", "message")
+	lr := newLogRecordTest(CRITICAL, "source", "message")
 	if lr.Level != CRITICAL {
 		t.Errorf("Incorrect level: %d should be %d", lr.Level, CRITICAL)
 	}
@@ -127,7 +127,7 @@ func TestFileLogWriter(t *testing.T) {
 	}
 	defer os.Remove(testLogFile)
 
-	w.LogWrite(newLogRecord(CRITICAL, "source", "message"))
+	w.LogWrite(newLogRecordTest(CRITICAL, "source", "message"))
 	w.Close()
 	runtime.Gosched()
 
@@ -150,7 +150,7 @@ func TestXMLLogWriter(t *testing.T) {
 	}
 	defer os.Remove(testLogFile)
 
-	w.LogWrite(newLogRecord(CRITICAL, "source", "message"))
+	w.LogWrite(newLogRecordTest(CRITICAL, "source", "message"))
 	w.Close()
 	runtime.Gosched()
 

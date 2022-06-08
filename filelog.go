@@ -43,8 +43,9 @@ type FileLogWriter struct {
 // This is the FileLogWriter's output method
 func (w *FileLogWriter) LogWrite(rec *LogRecord) {
 	if rec.Json {
-		encode := NewJsonEncoder()
+		encode := getJsonEncoder()
 		rec.Message = encode.EncodeJson(rec)
+		putJsonEncoder(encode)
 	}
 	w.rec <- rec
 }

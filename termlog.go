@@ -39,8 +39,9 @@ func (c *ConsoleLogWriter) run(out io.Writer) {
 // buffer is full.
 func (c *ConsoleLogWriter) LogWrite(rec *LogRecord) {
 	if rec.Json {
-		encode := NewJsonEncoder()
+		encode := getJsonEncoder()
 		rec.Message = encode.EncodeString(rec)
+		putJsonEncoder(encode)
 	}
 	c.w <- rec
 }

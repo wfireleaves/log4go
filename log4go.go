@@ -49,6 +49,7 @@ import (
 	"fmt"
 	"os"
 	"runtime"
+	"sync"
 	"time"
 )
 
@@ -93,6 +94,9 @@ var (
 	// LogBufferLength specifies how many log messages a particular log4go
 	// logger can buffer at a time before writing them.
 	LogBufferLength = 32
+	LogRecordPool   = sync.Pool{New: func() interface{} {
+		return newLogRecord()
+	}}
 )
 
 /****** LogRecord ******/
@@ -105,6 +109,31 @@ type LogRecord struct {
 	Message string    // The log message
 	Json    bool      // The log type (true: Format, false: json)
 	Fields  []Field   // The json log field
+}
+
+func newLogRecord() *LogRecord {
+	return &LogRecord{}
+}
+
+func GetLogRecord(lv Level, score, message string, json bool, field []Field) *LogRecord {
+	rec := LogRecordPool.Get().(*LogRecord)
+	rec.Level = lv
+	rec.Created = time.Now()
+	rec.Source = score
+	rec.Message = message
+	rec.Json = json
+	rec.Fields = field
+	return rec
+}
+
+func PutLogRecord(rec *LogRecord) {
+	rec.Level = FINEST
+	rec.Created = time.Time{}
+	rec.Source = ""
+	rec.Message = ""
+	rec.Json = false
+	rec.Fields = nil
+	LogRecordPool.Put(rec)
 }
 
 /****** LogWriter ******/

@@ -3,17 +3,32 @@ package log4go
 import (
 	"fmt"
 	"strconv"
+	"sync"
 	"unicode/utf8"
 )
 
 const Hex = "0123456789ABCDEF"
+
+var jsonEncoderPool = sync.Pool{New: func() interface{} {
+	return newJsonEncoder()
+}}
+
+func getJsonEncoder() *jsonEncoder {
+	encoder := jsonEncoderPool.Get().(*jsonEncoder)
+	return encoder
+}
+
+func putJsonEncoder(enc *jsonEncoder) {
+	enc.buf = enc.buf[0:0:cap(enc.buf)]
+	jsonEncoderPool.Put(enc)
+}
 
 type jsonEncoder struct {
 	buf  []byte
 	left bool
 }
 
-func NewJsonEncoder() *jsonEncoder {
+func newJsonEncoder() *jsonEncoder {
 	return &jsonEncoder{
 		buf: make([]byte, 0, 100),
 	}
