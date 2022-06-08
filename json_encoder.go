@@ -47,6 +47,9 @@ func (enc *jsonEncoder) EncodeJson(record *LogRecord) string {
 	enc.appendString(`,"file":`)
 	enc.appendString(`"` + record.Source + `"`)
 	for _, f := range record.Fields {
+		if f.Type == UnknownType {
+			continue
+		}
 		f.AddTo(enc)
 	}
 	enc.appendByte('}')
@@ -62,6 +65,9 @@ func (enc *jsonEncoder) EncodeString(record *LogRecord) string {
 	enc.appendByte(' ')
 	args := make([]interface{}, 0, len(record.Fields))
 	for _, f := range record.Fields {
+		if f.Type == UnknownType {
+			continue
+		}
 		enc.appendString(f.Key + ":")
 		switch f.Type {
 		case Int32Type,

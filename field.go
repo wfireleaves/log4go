@@ -82,7 +82,7 @@ func Int64(key string, value int64) Field {
 }
 
 func Int(key string, value int) Field {
-	return Field{Key: key, Type: IntType, Integer: value}
+	return Field{Key: key, Type: IntType, Integer: int64(value)}
 }
 
 func Float32(key string, value float32) Field {

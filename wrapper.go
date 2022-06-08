@@ -105,7 +105,7 @@ func Logc(lvl Level, closure func() string) {
 
 // Utility for finest log messages (see Debug() for parameter explanation)
 // Wrapper for (*Logger).Finest
-func Finest(arg0 string, args ...interface{}) {
+func Finestf(arg0 string, args ...interface{}) {
 	const (
 		lvl = FINEST
 	)
@@ -114,7 +114,7 @@ func Finest(arg0 string, args ...interface{}) {
 
 // Utility for fine log messages (see Debug() for parameter explanation)
 // Wrapper for (*Logger).Fine
-func Fine(arg0 string, args ...interface{}) {
+func Finef(arg0 string, args ...interface{}) {
 	const (
 		lvl = FINE
 	)
@@ -126,7 +126,7 @@ func Fine(arg0 string, args ...interface{}) {
 // When given a closure of type func()string, this logs the string returned by the closure iff it will be logged.  The closure runs at most one time.
 // When given anything else, the log message will be each of the arguments formatted with %v and separated by spaces (ala Sprint).
 // Wrapper for (*Logger).Debug
-func Debug(arg0 string, args ...interface{}) {
+func Debugf(arg0 string, args ...interface{}) {
 	const (
 		lvl = DEBUG
 	)
@@ -135,7 +135,7 @@ func Debug(arg0 string, args ...interface{}) {
 
 // Utility for trace log messages (see Debug() for parameter explanation)
 // Wrapper for (*Logger).Trace
-func Trace(arg0 string, args ...interface{}) {
+func Tracef(arg0 string, args ...interface{}) {
 	const (
 		lvl = TRACE
 	)
@@ -144,7 +144,7 @@ func Trace(arg0 string, args ...interface{}) {
 
 // Utility for info log messages (see Debug() for parameter explanation)
 // Wrapper for (*Logger).Info
-func Info(arg0 string, args ...interface{}) {
+func Infof(arg0 string, args ...interface{}) {
 	const (
 		lvl = INFO
 	)
@@ -154,7 +154,7 @@ func Info(arg0 string, args ...interface{}) {
 // Utility for warn log messages (returns an error for easy function returns) (see Debug() for parameter explanation)
 // These functions will execute a closure exactly once, to build the error message for the return
 // Wrapper for (*Logger).Warn
-func Warn(arg0 string, args ...interface{}) {
+func Warnf(arg0 string, args ...interface{}) {
 	const (
 		lvl = WARNING
 	)
@@ -164,7 +164,7 @@ func Warn(arg0 string, args ...interface{}) {
 // Utility for error log messages (returns an error for easy function returns) (see Debug() for parameter explanation)
 // These functions will execute a closure exactly once, to build the error message for the return
 // Wrapper for (*Logger).Error
-func Error(arg0 string, args ...interface{}) {
+func Errorf(arg0 string, args ...interface{}) {
 	const (
 		lvl = ERROR
 	)
@@ -174,10 +174,38 @@ func Error(arg0 string, args ...interface{}) {
 // Utility for critical log messages (returns an error for easy function returns) (see Debug() for parameter explanation)
 // These functions will execute a closure exactly once, to build the error message for the return
 // Wrapper for (*Logger).Critical
-func Critical(arg0 string, args ...interface{}) {
+func Criticalf(arg0 string, args ...interface{}) {
 	const (
 		lvl = CRITICAL
 	)
 
 	Global.intLogf(lvl, arg0, args...)
+}
+
+func Debug(message string, field ...Field) {
+	const (
+		lvl = DEBUG
+	)
+	Global.intLogJson(lvl, message, field...)
+}
+
+func Info(message string, field ...Field) {
+	const (
+		lvl = INFO
+	)
+	Global.intLogJson(lvl, message, field...)
+}
+
+func Warn(message string, field ...Field) {
+	const (
+		lvl = WARNING
+	)
+	Global.intLogJson(lvl, message, field...)
+}
+
+func Error(message string, field ...Field) {
+	const (
+		lvl = ERROR
+	)
+	Global.intLogJson(lvl, message, field...)
 }
