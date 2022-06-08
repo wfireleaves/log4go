@@ -244,19 +244,20 @@ func (log Logger) intLogJson(lvl Level, message string, filed ...Field) {
 	if ok {
 		src = fmt.Sprintf("%s:%d", fileName, lineno)
 	}
-	// Make the log record
-	rec := &LogRecord{
-		Level:   lvl,
-		Created: time.Now(),
-		Source:  src,
-		Message: message,
-		Json:    true,
-		Fields:  filed,
-	}
+	now := time.Now()
 	// Dispatch the logs
 	for _, filt := range log {
 		if lvl < filt.Level {
 			continue
+		}
+		// Make the log record
+		rec := &LogRecord{
+			Level:   lvl,
+			Created: now,
+			Source:  src,
+			Message: message,
+			Json:    true,
+			Fields:  filed,
 		}
 		filt.LogWrite(rec)
 	}

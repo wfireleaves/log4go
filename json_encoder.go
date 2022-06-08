@@ -44,6 +44,7 @@ func (enc *jsonEncoder) EncodeString(record *LogRecord) string {
 		return record.Message
 	}
 	enc.appendString(record.Message)
+	enc.appendByte(' ')
 	args := make([]interface{}, 0, len(record.Fields))
 	for _, f := range record.Fields {
 		enc.appendString(f.Key + ":")
