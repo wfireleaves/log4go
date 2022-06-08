@@ -64,12 +64,21 @@ func (enc *jsonEncoder) EncodeString(record *LogRecord) string {
 	for _, f := range record.Fields {
 		enc.appendString(f.Key + ":")
 		switch f.Type {
-		case Int32Type:
+		case Int32Type,
+			Uint32Type,
+			Int8Type,
+			Uint8Type,
+			Int64Type,
+			Uint64Type,
+			IntType:
 			enc.appendString("%d")
 			args = append(args, f.Integer)
 		case StringType:
 			enc.appendString("%s")
 			args = append(args, f.String)
+		case BoolType:
+			enc.appendString("%t")
+			args = append(args, f.Interface)
 		default:
 			enc.appendString("%v")
 			args = append(args, f.Interface)
@@ -81,18 +90,74 @@ func (enc *jsonEncoder) EncodeString(record *LogRecord) string {
 	return format
 }
 
-func (enc *jsonEncoder) AddInt32(key string, value int32) {
-	enc.AppendLeft()
-	enc.safeAddString(key)
-	enc.appendString(`": `)
-	enc.appendString(strconv.Itoa(int(value)))
-}
-
 func (enc *jsonEncoder) AddBool(key string, value bool) {
 	enc.AppendLeft()
 	enc.safeAddString(key)
 	enc.appendString(`": `)
 	enc.buf = strconv.AppendBool(enc.buf, value)
+}
+
+func (enc *jsonEncoder) AddInt(key string, value int) {
+	enc.AppendLeft()
+	enc.safeAddString(key)
+	enc.appendString(`": `)
+	enc.buf = strconv.AppendInt(enc.buf, int64(value), 10)
+}
+
+func (enc *jsonEncoder) AddInt32(key string, value int32) {
+	enc.AppendLeft()
+	enc.safeAddString(key)
+	enc.appendString(`": `)
+	enc.buf = strconv.AppendInt(enc.buf, int64(value), 10)
+}
+
+func (enc *jsonEncoder) AddUint32(key string, value uint32) {
+	enc.AppendLeft()
+	enc.safeAddString(key)
+	enc.appendString(`": `)
+	enc.buf = strconv.AppendUint(enc.buf, uint64(value), 10)
+}
+
+func (enc *jsonEncoder) AddInt64(key string, value int64) {
+	enc.AppendLeft()
+	enc.safeAddString(key)
+	enc.appendString(`": `)
+	enc.buf = strconv.AppendInt(enc.buf, value, 10)
+}
+
+func (enc *jsonEncoder) AddUint64(key string, value uint64) {
+	enc.AppendLeft()
+	enc.safeAddString(key)
+	enc.appendString(`": `)
+	enc.buf = strconv.AppendUint(enc.buf, value, 10)
+}
+
+func (enc *jsonEncoder) AddInt8(key string, value int8) {
+	enc.AppendLeft()
+	enc.safeAddString(key)
+	enc.appendString(`": `)
+	enc.buf = strconv.AppendInt(enc.buf, int64(value), 10)
+}
+
+func (enc *jsonEncoder) AddUint8(key string, value int8) {
+	enc.AppendLeft()
+	enc.safeAddString(key)
+	enc.appendString(`": `)
+	enc.buf = strconv.AppendUint(enc.buf, uint64(value), 10)
+}
+
+func (enc *jsonEncoder) AddFloat32(key string, value float32) {
+	enc.AppendLeft()
+	enc.safeAddString(key)
+	enc.appendString(`": `)
+	enc.buf = strconv.AppendFloat(enc.buf, float64(value), 'f', -1, 32)
+}
+
+func (enc *jsonEncoder) AddFloat64(key string, value float64) {
+	enc.AppendLeft()
+	enc.safeAddString(key)
+	enc.appendString(`": `)
+	enc.buf = strconv.AppendFloat(enc.buf, value, 'f', -1, 64)
 }
 
 func (enc *jsonEncoder) AddString(key, value string) {

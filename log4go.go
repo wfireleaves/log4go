@@ -375,25 +375,25 @@ func (log Logger) Logc(lvl Level, closure func() string) {
 	log.intLogc(lvl, closure)
 }
 
-// Finest logs a message at the finest log level.
+// Finestf logs a message at the finest log level.
 // See Debug for an explanation of the arguments.
-func (log Logger) Finest(arg0 string, args ...interface{}) {
+func (log Logger) Finestf(arg0 string, args ...interface{}) {
 	const (
 		lvl = FINEST
 	)
 	log.intLogf(lvl, arg0, args...)
 }
 
-// Fine logs a message at the fine log level.
+// Finef logs a message at the fine log level.
 // See Debug for an explanation of the arguments.
-func (log Logger) Fine(arg0 string, args ...interface{}) {
+func (log Logger) Finef(arg0 string, args ...interface{}) {
 	const (
 		lvl = FINE
 	)
 	log.intLogf(lvl, arg0, args...)
 }
 
-// Debug is a utility method for debug log messages.
+// Debugf is a utility method for debug log messages.
 // The behavior of Debug depends on the first argument:
 // - arg0 is a string
 //   When given a string as the first argument, this behaves like Logf but with
@@ -405,78 +405,87 @@ func (log Logger) Fine(arg0 string, args ...interface{}) {
 // - arg0 is interface{}
 //   When given anything else, the log message will be each of the arguments
 //   formatted with %v and separated by spaces (ala Sprint).
-func (log Logger) Debug(arg0 string, args ...interface{}) {
+func (log Logger) Debugf(arg0 string, args ...interface{}) {
 	const (
 		lvl = DEBUG
 	)
 	log.intLogf(lvl, arg0, args...)
 }
 
-// Trace logs a message at the trace log level.
+// Tracef logs a message at the trace log level.
 // See Debug for an explanation of the arguments.
-func (log Logger) Trace(arg0 string, args ...interface{}) {
+func (log Logger) Tracef(arg0 string, args ...interface{}) {
 	const (
 		lvl = TRACE
 	)
 	log.intLogf(lvl, arg0, args...)
 }
 
-// Info logs a message at the info log level.
+// Infof logs a message at the info log level.
 // See Debug for an explanation of the arguments.
-func (log Logger) Info(arg0 string, args ...interface{}) {
+func (log Logger) Infof(arg0 string, args ...interface{}) {
 	const (
 		lvl = INFO
 	)
 	log.intLogf(lvl, arg0, args...)
 }
 
-// Warn logs a message at the warning log level and returns the formatted error.
+// Warnf logs a message at the warning log level and returns the formatted error.
 // At the warning level and higher, there is no performance benefit if the
 // message is not actually logged, because all formats are processed and all
 // closures are executed to format the error message.
 // See Debug for further explanation of the arguments.
-func (log Logger) Warn(arg0 string, args ...interface{}) {
+func (log Logger) Warnf(arg0 string, args ...interface{}) {
 	const (
 		lvl = WARNING
 	)
 	log.intLogf(lvl, fmt.Sprintf(arg0, args...))
 }
 
-// Error logs a message at the error log level and returns the formatted error,
+// Errorf logs a message at the error log level and returns the formatted error,
 // See Warn for an explanation of the performance and Debug for an explanation
 // of the parameters.
-func (log Logger) Error(arg0 string, args ...interface{}) {
+func (log Logger) Errorf(arg0 string, args ...interface{}) {
 	const (
 		lvl = ERROR
 	)
 	log.intLogf(lvl, fmt.Sprintf(arg0, args...))
 }
 
-// Critical logs a message at the critical log level and returns the formatted error,
+// Criticalf logs a message at the critical log level and returns the formatted error,
 // See Warn for an explanation of the performance and Debug for an explanation
 // of the parameters.
-func (log Logger) Critical(arg0 string, args ...interface{}) {
+func (log Logger) Criticalf(arg0 string, args ...interface{}) {
 	const (
 		lvl = CRITICAL
 	)
 	log.intLogf(lvl, fmt.Sprintf(arg0, args...))
 }
 
-func (log Logger) Errorjson(message string, field ...Field) {
+func (log Logger) Debug(message string, field ...Field) {
 	const (
-		lvl = ERROR
+		lvl = DEBUG
 	)
 	log.intLogJson(lvl, message, field...)
 }
 
-func Int32(key string, value int32) Field {
-	return Field{Key: key, Type: Int32Type, Integer: int64(value)}
+func (log Logger) Info(message string, field ...Field) {
+	const (
+		lvl = INFO
+	)
+	log.intLogJson(lvl, message, field...)
 }
 
-func String(key, value string) Field {
-	return Field{Key: key, Type: StringType, String: value}
+func (log Logger) Warn(message string, field ...Field) {
+	const (
+		lvl = WARNING
+	)
+	log.intLogJson(lvl, message, field...)
 }
 
-func Bool(key string, value bool) Field {
-	return Field{Key: key, Type: BoolType, Interface: value}
+func (log Logger) Error(message string, field ...Field) {
+	const (
+		lvl = ERROR
+	)
+	log.intLogJson(lvl, message, field...)
 }
