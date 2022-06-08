@@ -81,7 +81,7 @@ func Int64(key string, value int64) Field {
 	return Field{Key: key, Type: Int64Type, Integer: value}
 }
 
-func Int(key string, value int64) Field {
+func Int(key string, value int) Field {
 	return Field{Key: key, Type: IntType, Integer: value}
 }
 
