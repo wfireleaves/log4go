@@ -174,6 +174,14 @@ func (enc *jsonEncoder) AddString(key, value string) {
 	enc.appendByte('"')
 }
 
+func (enc *jsonEncoder) AddInterface(key string, value interface{}) {
+	enc.AppendLeft()
+	enc.safeAddString(key)
+	enc.appendString(`": "`)
+	enc.safeAddString(fmt.Sprintf("%v", value))
+	enc.appendByte('"')
+}
+
 func (enc *jsonEncoder) AppendLeft() {
 	if enc.left == true {
 		enc.appendString(`"`)

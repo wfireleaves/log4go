@@ -20,4 +20,8 @@ func main() {
 	log4go.Error("test json float64", l4g.Float64("float64", 12345123152.345124))
 	log4go.Error("test json uint8", l4g.Uint8("uint8", 8))
 	log4go.Error("test json bool", l4g.Bool("true", false))
+	log4go.Error("test interface", l4g.Any("bool", true), l4g.Any("uint32", 12), l4g.Any("slice", []int{1, 2, 3}))
+	log4go.Error("test interface", l4g.Any("map", map[int]string{1: "qq", 2: "1dc-$"}))
+	log4go.Error("test interface", l4g.Any("uint32", uint32(123)))
+	log4go.Error("test interface", l4g.Any("int64", int64(142342352412)))
 }

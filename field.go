@@ -15,6 +15,7 @@ const (
 	Float64Type
 	Float32Type
 	StringType
+	InterfaceType
 )
 
 type Field struct {
@@ -49,6 +50,8 @@ func (f Field) AddTo(enc *jsonEncoder) {
 		enc.AddFloat64(f.Key, f.Interface.(float64))
 	case StringType:
 		enc.AddString(f.Key, f.String)
+	case InterfaceType:
+		enc.AddInterface(f.Key, f.Interface)
 	}
 }
 
@@ -103,4 +106,40 @@ func Err(err error) Field {
 		value = err.Error()
 	}
 	return Field{Key: "error", Type: StringType, String: value}
+}
+
+func Any(key string, value interface{}) Field {
+	f := Field{
+		Key: key,
+	}
+	switch value.(type) {
+	case int:
+		f.Integer = int64(value.(int))
+		f.Type = IntType
+	case uint8:
+		f.Integer = int64(value.(uint8))
+		f.Type = IntType
+	case int8:
+		f.Integer = int64(value.(int8))
+		f.Type = IntType
+	case uint32:
+		f.Integer = int64(value.(uint32))
+		f.Type = IntType
+	case int32:
+		f.Integer = int64(value.(int32))
+		f.Type = IntType
+	case uint64:
+		f.Integer = int64(value.(uint64))
+		f.Type = IntType
+	case int64:
+		f.Integer = int64(value.(int64))
+		f.Type = IntType
+	case string:
+		f.String = value.(string)
+		f.Type = StringType
+	default:
+		f.Type = InterfaceType
+		f.Interface = value
+	}
+	return f
 }
